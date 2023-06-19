@@ -1,4 +1,5 @@
-class Movie {
+class Movie { // Entities = concepto de dominio = concepto de entidades que se usan en la aplicación
+
   final bool adult;
   final String backdropPath;
   final List<String> genreIds;
