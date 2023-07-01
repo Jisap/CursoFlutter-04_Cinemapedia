@@ -9,17 +9,18 @@ final nowPlayingMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movi
 
   final fetchMoreMovies = ref.watch( movieRepositoryProvider ).getNowPlaying; // Cuando getNowPlaying sea llamado se obtendrá una lista de movie
 
-  return MoviesNotifier(
-    fetchMoreMovies: fetchMoreMovies // Esa lista de movie se notificará
+  return MoviesNotifier(                                                      // Se devolverá una "notificación de movies"
+    fetchMoreMovies: fetchMoreMovies                                          // que recibe como argumento la lista de movies
   );
 });
 
 typedef MovieCallback = Future<List<Movie>> Function({ int page });                                                                                                 
 
 
-class MoviesNotifier extends StateNotifier<List<Movie>>{ // Controlador que recibe los cambios y modifica el state
+class MoviesNotifier extends StateNotifier<List<Movie>>{ // Este "notificador" es un controlador que recibe los cambios en la lista y modifica el state
   
   int currentPage = 0;
+  bool isLoading = false;
   MovieCallback fetchMoreMovies;
 
   MoviesNotifier({
@@ -27,9 +28,16 @@ class MoviesNotifier extends StateNotifier<List<Movie>>{ // Controlador que reci
   }): super([]);
 
   Future<void> loadNextPage() async{ // Modifica la data, osea la lista de movie
+    if(isLoading) return;
+
+    isLoading = true;
+
     currentPage ++;
     final List<Movie> movies = await fetchMoreMovies( page: currentPage );
     state = [...state, ...movies];
+
+    await Future.delayed(const Duration(milliseconds: 300));
+    isLoading=false;
   }
   
 }
