@@ -42,34 +42,81 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );  // Cuando el estado cambia reconstruye el widget.
     final slideShowMovies = ref.watch( moviesSlideshowProvider );    // Usaremos el provider del slideshow basado en provider ppal para mostrar en la cabezera solo 6 resultados
 
-    return Column(
-      children: [
+    return CustomScrollView(
+      slivers: [
 
-        CustomAppbar(),
-
-        MoviesSlideshow(movies: slideShowMovies),
-
-        MovieHorizontalListview(
-          movies: nowPlayingMovies,
-          title: 'En cines',
-          subTitle: 'Lunes 20', 
-          loadNextPage: (){ 
-            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
-          }, 
+        const SliverAppBar(
+          floating: true,
+          flexibleSpace: FlexibleSpaceBar(
+            title: CustomAppbar(),
+          ),
         ),
 
-        // Expanded(
-        //   child: ListView.builder(
-        //     itemCount: nowPlayingMovies.length,
-        //     itemBuilder: (context, index){
-        //       final movie = nowPlayingMovies[index];
-        //       return ListTile(
-        //         title: Text( movie.title ),
-        //       );
-        //     }
-        //   ),
-        // )
-      ],
+        SliverList(delegate: SliverChildBuilderDelegate(
+          (context, index){ 
+            return Column(
+              children: [
+          
+                //CustomAppbar(),
+          
+                MoviesSlideshow(movies: slideShowMovies),
+          
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'En cines',
+                  subTitle: 'Lunes 20', 
+                  loadNextPage: (){ 
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                  }, 
+                ),
+          
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'Proximamente',
+                  subTitle: 'En este mes',
+                  loadNextPage: () {
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                  },
+                ),
+          
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'Populares',
+                  subTitle: 'Lunes 20',
+                  loadNextPage: () {
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                  },
+                ),
+          
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'Mejor calificadas',
+                  subTitle: 'De siempre',
+                  loadNextPage: () {
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                  },
+                ),
+          
+                const SizedBox( height: 10 ),
+          
+                // Expanded(
+                //   child: ListView.builder(
+                //     itemCount: nowPlayingMovies.length,
+                //     itemBuilder: (context, index){
+                //       final movie = nowPlayingMovies[index];
+                //       return ListTile(
+                //         title: Text( movie.title ),
+                //       );
+                //     }
+                //   ),
+                // )
+              ],
+            );
+          },
+          childCount: 1
+        )),
+
+      ]
     );
   }
 }
