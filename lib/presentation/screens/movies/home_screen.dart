@@ -34,6 +34,9 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   void initState() {
     super.initState();
     ref.read( nowPlayingMoviesProvider.notifier ).loadNextPage(); // lectura del provider
+    ref.read( popularMoviesProvider.notifier ).loadNextPage();
+    ref.read( upComingMoviesProvider.notifier).loadNextPage();
+    ref.read( topRatedMoviesProvider.notifier).loadNextPage();
   }
 
   @override
@@ -41,6 +44,9 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );  // Cuando el estado cambia reconstruye el widget.
     final slideShowMovies = ref.watch( moviesSlideshowProvider );    // Usaremos el provider del slideshow basado en provider ppal para mostrar en la cabezera solo 6 resultados
+    final popularMovies = ref.watch( popularMoviesProvider );
+    final upComingMovies = ref.watch( upComingMoviesProvider );
+    final topRatedMovies = ref.watch( topRatedMoviesProvider );
 
     return CustomScrollView(
       slivers: [
@@ -71,29 +77,29 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                 ),
           
                 MovieHorizontalListview(
-                  movies: nowPlayingMovies,
+                  movies: upComingMovies,
                   title: 'Proximamente',
                   subTitle: 'En este mes',
                   loadNextPage: () {
-                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                    ref.read(upComingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
                   },
                 ),
           
                 MovieHorizontalListview(
-                  movies: nowPlayingMovies,
+                  movies: popularMovies,
                   title: 'Populares',
                   subTitle: 'Lunes 20',
                   loadNextPage: () {
-                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                    ref.read(popularMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
                   },
                 ),
           
                 MovieHorizontalListview(
-                  movies: nowPlayingMovies,
+                  movies: topRatedMovies,
                   title: 'Mejor calificadas',
                   subTitle: 'De siempre',
                   loadNextPage: () {
-                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
+                    ref.read(topRatedMoviesProvider.notifier).loadNextPage(); // movies_providers lee el movies_repository_provider y este a su vez el movieRepositoryImpl
                   },
                 ),
           

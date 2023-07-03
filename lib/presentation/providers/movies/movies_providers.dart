@@ -7,11 +7,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
                                                       //controlador   data que se controla
 final nowPlayingMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>>((ref){  // Nos indica los cambios del estado del provider
 
-  final fetchMoreMovies = ref.watch( movieRepositoryProvider ).getNowPlaying; // Cuando getNowPlaying sea llamado se obtendrá una lista de movie
+  final fetchMoreMovies = ref.watch( movieRepositoryProvider ).getNowPlaying;               // Cuando getNowPlaying sea llamado se obtendrá una lista de movie
 
-  return MoviesNotifier(                                                      // Se devolverá una "notificación de movies"
-    fetchMoreMovies: fetchMoreMovies                                          // que recibe como argumento la lista de movies
+  return MoviesNotifier(                                                                    // Se devolverá una "notificación de movies"
+    fetchMoreMovies: fetchMoreMovies                                                        // que recibe como argumento la lista de movies
   );
+});
+
+
+final popularMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {    // Provider para peliculas populares
+  final fetchMoreMovies = ref.watch(movieRepositoryProvider).getPopular; 
+  return MoviesNotifier(fetchMoreMovies:fetchMoreMovies );
+});
+
+final upComingMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {   // Provider para próximas películas
+  final fetchMoreMovies = ref.watch(movieRepositoryProvider).getUpcoming;
+  return MoviesNotifier(fetchMoreMovies: fetchMoreMovies);
+});
+
+final topRatedMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {  // Provider para peliculas topRated
+  final fetchMoreMovies = ref.watch(movieRepositoryProvider).getTopRated;
+  return MoviesNotifier(fetchMoreMovies: fetchMoreMovies);
 });
 
 typedef MovieCallback = Future<List<Movie>> Function({ int page });                                                                                                 

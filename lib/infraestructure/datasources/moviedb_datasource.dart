@@ -18,8 +18,20 @@ class MoviedbDatasource extends MoviesDatasource{
       }
     ));
 
+    List<Movie> _jsonToMovies( Map<String, dynamic> json ){             // Método abreviado para obtener una lista de movies
+      
+      final movieDBResponse = MovieDbResponse.fromJson(json);           // Convertimos a json la respuesta total de la api
+
+      final List<Movie> movies = movieDBResponse.results
+          .where((moviedb) => moviedb.posterPath != 'no-poster')        // Si viene el posterPath se incluye en la respuesta sino no
+          .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))       // Usamos el mapper para obtener de la respuesta una lista de Movie
+          .toList();
+
+      return movies;
+    }
+
   @override
-  Future<List<Movie>> getNowPlaying({int page = 1}) async{                  // Método para obtener una lista de Movies
+  Future<List<Movie>> getNowPlaying({int page = 1}) async{                  // Método no abreviado para obtener una lista de Movies
 
     final response = await dio.get('/movie/now_playing',                    // Obtenemos la respuesta de la api proporcionandole el endpoint final
       queryParameters: {                                                    // y la página que queremos visualizar 
@@ -35,6 +47,42 @@ class MoviedbDatasource extends MoviesDatasource{
         (moviedb) => MovieMapper.movieDBToEntity( moviedb )).toList();
 
     return movies;
+  }
+  
+  @override
+  Future<List<Movie>> getPopular({int page = 1}) async {
+    
+    final response = await dio.get('/movie/popular',                        // Obtenemos la respuesta de la api proporcionandole el endpoint final
+      queryParameters: {                                                    // y la página que queremos visualizar 
+        'page': page
+      }
+    );                   
+    
+    return _jsonToMovies(response.data);                                    // Aquí usamos el método abreviado para ahorrar lineas de código
+  }
+  
+  @override
+  Future<List<Movie>> getTopRated({int page = 1}) async {
+    
+    final response = await dio.get('/movie/top_rated',                       // Obtenemos la respuesta de la api proporcionandole el endpoint final
+      queryParameters: {                                                     // y la página que queremos visualizar 
+        'page': page
+      }
+    );  
+
+    return _jsonToMovies(response.data);  
+  }
+  
+  @override
+  Future<List<Movie>> getUpcoming({int page = 1}) async {
+    
+    final response = await dio.get('/movie/upcoming',                       // Obtenemos la respuesta de la api proporcionandole el endpoint final
+      queryParameters: {                                                     // y la página que queremos visualizar 
+        'page': page
+      }
+    );  
+
+    return _jsonToMovies(response.data);  
   }
 
 }
