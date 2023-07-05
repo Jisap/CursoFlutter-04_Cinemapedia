@@ -1,5 +1,6 @@
-import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
-import 'package:cinemapedia/presentation/providers/movies/movies_slideshow_provider.dart';
+//import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
+//import 'package:cinemapedia/presentation/providers/movies/movies_slideshow_provider.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
@@ -42,11 +43,16 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   @override
   Widget build(BuildContext context) {
 
-    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );  // Cuando el estado cambia reconstruye el widget.
-    final slideShowMovies = ref.watch( moviesSlideshowProvider );    // Usaremos el provider del slideshow basado en provider ppal para mostrar en la cabezera solo 6 resultados
+    final initialLoading = ref.watch( initialLoadingProvider );     // Determinamos si se cargaron los providers
+
+    if( initialLoading ) return const FullScreenLoader();           // true = cargando y mostramos el loader sino mostramos el CustonScrollVuew 
+
+    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider ); // Cuando el estado cambia reconstruye el widget.
+    final slideShowMovies = ref.watch( moviesSlideshowProvider );   // Usaremos el provider del slideshow basado en provider ppal para mostrar en la cabezera solo 6 resultados
     final popularMovies = ref.watch( popularMoviesProvider );
     final upComingMovies = ref.watch( upComingMoviesProvider );
     final topRatedMovies = ref.watch( topRatedMoviesProvider );
+
 
     return CustomScrollView(
       slivers: [
