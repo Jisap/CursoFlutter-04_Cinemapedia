@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MovieHorizontalListview extends StatefulWidget {
 
@@ -52,7 +53,7 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
         children: [
 
           if( widget.title != null || widget.subTitle != null )
-            _Title( title: widget.title, subTitle: widget.subTitle),
+            _Title( title: widget.title, subTitle: widget.subTitle), // Título y subtítulo de la película
 
           Expanded(
             child: ListView.builder(                          // Lista de imagenes
@@ -141,7 +142,11 @@ class _Slide extends StatelessWidget {
                     );  
                   }
 
-                  return FadeIn(child: child);
+                  return GestureDetector(
+                    onTap: () => context.push('/movie/${movie.id}'), // Cuando se pulse sobre la película redirigimos a movie_screen con el id correspondiente
+                    child: FadeIn(child: child),
+                  
+                  ); 
                 },
               ),
             ),
