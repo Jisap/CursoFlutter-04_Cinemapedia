@@ -178,7 +178,7 @@ class _ActorsByMovie extends ConsumerWidget {
                 Text(actor.name, maxLines:2),                         // Nombre del actor
                 Text(actor.character ?? '', 
                   maxLines: 2,
-                  style: TextStyle( fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
+                  style: const TextStyle( fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
                 ),
 
               ],
