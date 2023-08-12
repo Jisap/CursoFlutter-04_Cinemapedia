@@ -209,6 +209,15 @@ class _CustomSliverAppbar extends StatelessWidget { // Este widget muestra el po
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
+      actions:[
+        IconButton(
+          onPressed: (){
+            //TODO: realizar el toggle
+          }, 
+          icon: const Icon( Icons.favorite_border )
+          //icon: const Icon( Icons.favorite_rounded, color: Colors.red )
+        )
+      ],
       shadowColor: Colors.red,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.symmetric(horizontal:10, vertical:5),
@@ -231,36 +240,70 @@ class _CustomSliverAppbar extends StatelessWidget { // Este widget muestra el po
               ),
             ),
 
-            const SizedBox.expand(   // Gradiente de arriba a abajo
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
+
+            const _CustomGradient(              // Gradiente de arriba a abajo
+               begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    stops:[0.7, 1.0],
+                    stops:[0.8, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black87
-                    ])
-                )
-              ),
+                      Colors.black54
+                    ]
+            ),
+  
+            const _CustomGradient(              // Gradiente superior de izda a derecha
+              begin: Alignment.topLeft,
+              stops: [0.0, 0.3],
+              colors: [
+                Colors.black87,
+                Colors.transparent, 
+              ]
             ),
 
-            const SizedBox.expand(    // Gradiente superior de izda a derecha
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          stops: [0.0, 0.4],
-                          colors: [ Colors.black87,Colors.transparent, ]
-                      )
-                  )
-              ),
+            const _CustomGradient(              // gradiente de la arriba-derecha  a abajo a la izda
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              stops: [0.0, 0.2],
+              colors: [
+                Colors.black54,
+                Colors.transparent,
+              ]
             ),
 
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CustomGradient extends StatelessWidget { // Esqueleto del gradiente
+  
+  final AlignmentGeometry begin;
+  final AlignmentGeometry end;
+  final List<double> stops;
+  final List<Color> colors;
+  
+  const _CustomGradient({
+    this.begin = Alignment.centerLeft,  // valores por defecto
+    this.end = Alignment.centerRight, 
+    required this.stops, 
+    required this.colors
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(  // gradiente de la derecha arriba a abajo a la izda
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: begin,
+                    end: end,
+                    stops: stops,
+                    colors: colors
+                  )
+                )
+              )
     );
   }
 }

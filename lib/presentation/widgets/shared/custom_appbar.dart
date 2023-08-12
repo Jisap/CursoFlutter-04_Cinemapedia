@@ -45,7 +45,7 @@ class CustomAppbar extends ConsumerWidget {
                         ).then((movie) {                                           // Si se pincha en una de las movies                      
                             if( movie == null ) return;
 
-                            context.push('/movie/${ movie.id }');                  // redirección a la página de la movie
+                            context.push('/home/0/movie/${ movie.id }');                  // redirección a la página de la movie
                         });
                                   
                       },
