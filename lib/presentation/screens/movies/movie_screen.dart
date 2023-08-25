@@ -1,10 +1,11 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
+//import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/movie.dart';
-import '../../providers/movies/movie_info_provider.dart';
+//import '../../providers/movies/movie_info_provider.dart';
 
 
 class MovieScreen extends ConsumerStatefulWidget { // El consumer lee información de los providers
@@ -46,9 +47,9 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
       body: CustomScrollView(
         physics: const ClampingScrollPhysics(),
         slivers: [
-          _CustomSliverAppbar(movie: movie),
+          _CustomSliverAppbar(movie: movie),                    // Este widget muestra el poster junto el título y el boton de ir atras
           SliverList(delegate: SliverChildBuilderDelegate(
-            (context, index) => _MovieDetails(movie: movie),
+            (context, index) => _MovieDetails(movie: movie),    // Imagen pequeña, descripción, chips y actores
             childCount: 1,
           ))
         ],
@@ -192,7 +193,12 @@ class _ActorsByMovie extends ConsumerWidget {
 }
 
 
-class _CustomSliverAppbar extends StatelessWidget { // Este widget muestra el poster junto el título y el boton de ir atras
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId) { // Estado para tarea asíncrona basado en family -> permite pasarle un argumento
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider); // Estado de la bd y sus métodos
+  return localStorageRepository.isMovieFavorite(movieId);                   // Obtenemos true o false según este o no la película en bd
+});
+
+class _CustomSliverAppbar extends ConsumerWidget { // Este widget muestra el poster junto el título y el boton de ir atras
   
   final Movie movie;
   
@@ -201,8 +207,10 @@ class _CustomSliverAppbar extends StatelessWidget { // Este widget muestra el po
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id)); // Estado para favoritos según id, true or false
+    
     final size = MediaQuery.of(context).size; // Dimensiones del dispositivosize
 
     return SliverAppBar(
@@ -211,11 +219,26 @@ class _CustomSliverAppbar extends StatelessWidget { // Este widget muestra el po
       foregroundColor: Colors.white,
       actions:[
         IconButton(
-          onPressed: (){
-            //TODO: realizar el toggle
+          onPressed: () async{
+            
+            // await ref.read(localStorageRepositoryProvider).toogleFavorite(movie); // Cargamos el estado de este provider y con el sus métodos
+            
+            await ref.read( favoriteMoviesProvider.notifier ).toggleFavorite(movie); // Cargamos el estado del provider de favoritos y con el sus métodos
+                                                                                     // Este provider esta basado en la implementación de infraestructure 
+                                                                                     // y devuelve un state de las películas en bd con los favoritos 
+
+            ref.invalidate(isFavoriteProvider(movie.id));                            // Refresh del estado del provider isFavoriteProvider que nos devuelve
+                                                                                     // true o false según este o no la película en bd
+
           }, 
-          icon: const Icon( Icons.favorite_border )
-          //icon: const Icon( Icons.favorite_rounded, color: Colors.red )
+          icon: isFavoriteFuture.when(
+            loading: () => const CircularProgressIndicator(strokeWidth: 2),
+            data: (isFavorite) => isFavorite
+              ? const Icon( Icons.favorite_rounded, color: Colors.red )
+              : const Icon( Icons.favorite_border )
+            ,
+            error: (_, __) => throw UnimplementedError(),
+          )
         )
       ],
       shadowColor: Colors.red,
